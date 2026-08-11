@@ -1,11 +1,9 @@
-import { envSchema } from './env';
+import { env } from './env';
 import mongoose from 'mongoose';
-
-const MONGO_URI = envSchema.MONGO_URI;
 
 export const connectDB = async (): Promise<void> => {
   try{
-    const conn = await mongoose.connect(MONGO_URI);
+    const conn = await mongoose.connect(env.MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}/${conn.connection.name}`);
   } catch (error) {
     console.error('MongoDB Connection Error: ', error);

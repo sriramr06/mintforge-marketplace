@@ -1,17 +1,17 @@
-const { z } = require('zod');
-const dotenv = require('dotenv');
-const path = require ('path');
+import { z } from 'zod';
+import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-export const envSchema = z.object({
+const envSchema = z.object({
   // Server
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z.string().transform(Number).default('5000'),
-  CLIENT_URL: z.string().url().default('http://localhost:5173'),
+  PORT: z.coerce.number().default(5000),
+  CLIENT_URL: z.url().default('http://localhost:5173'),
 
   // Database
-  MONGO_URI: z.string().min(1, 'MoNGO_URI is required'),
+  MONGO_URI: z.string().min(1, 'MONGO_URI is required'),
 
   // JWT
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
@@ -30,9 +30,10 @@ export const envSchema = z.object({
 
   // Email (SMTP)
   SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.string().transform(Number).default('587'),
+  SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
-  EMAIL_FROM: z.string().email().optional(),
+  EMAIL_FROM: z.email().optional(),
 });
 
+export const env = envSchema.parse(process.env);
