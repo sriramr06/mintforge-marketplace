@@ -9,12 +9,16 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   status: UserStatus;
-  isVerified: boolean;
   lastLogin: Date;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
-  comparePassword(candidatePassword: string): Promise<boolean>
+  deletedAt: Date;  
+  isVerified: boolean;
+  emailVerificationToken: string;
+  emailVerificationExpires: Date;
+  passwordResetToken: string;
+  passwordResetExpires: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 };
 
 const userSchema = new Schema<IUser>(
@@ -41,11 +45,7 @@ const userSchema = new Schema<IUser>(
     status: {
       type: String,
       enum: Object.values(UserStatus),
-      default: UserStatus.ACTIVE
-    },
-    isVerified: {
-      type: Boolean,
-      default: false
+      default: UserStatus.PENDING_VERIFICATION
     },
     lastLogin: {
       type: Date,
@@ -54,12 +54,35 @@ const userSchema = new Schema<IUser>(
     deletedAt: {
       type: Date,
       default: null
+    },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailVerificationToken: {
+      type: String,
+      select: false
+    },
+    emailVerificationExpires: {
+      type: Date,
+      select: false,
+    },
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false,
     }
   },
   {
     timestamps: true,
     collection: 'users'
 });
+
+userSchema.index({ emailVerificationToken: 1 }, {sparse: true, expireAfterSeconds: 86400 });
+userSchema.index({ passwordResetToken: 1 }, {sparse: true, expireAfterSeconds: 3600 });
 
 userSchema.pre<IUser>('save', async function() {
   if (!this.isModified('password')) return;

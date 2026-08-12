@@ -100,13 +100,6 @@ refreshTokenSchema.statics.findActiveToken = async function (token: string) {
   });
 };
 
-refreshTokenSchema.statics.revokeAllUserTokens = async function (userId: string) {
-  return this.updateMany(
-    { userId, isRevoked: false},
-    { isRevoked: true}
-  );
-};
-
 refreshTokenSchema.statics.cleanExpired = async function() {
   return this.deleteMany({
     expiresAt: { $lt: new Date() }

@@ -56,3 +56,15 @@ export const generateTokens = (
 
   return { accessToken, refreshToken };
 };
+
+// Hash tokens
+export const hashToken = (token: string) => crypto.createHash('sha256').update(token).digest('hex');
+
+// Get a token's expiry as a Date, derived from its own exp claim
+export const getTokenExpiry = (token: string): Date => {
+  const decoded = jwt.decode(token) as JwtPayload | null;
+  if (!decoded?.exp) {
+    throw new Error('Token has no expiry claim');
+  }
+  return new Date(decoded.exp * 1000);
+};

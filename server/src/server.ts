@@ -4,9 +4,10 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './config/database';
-import { errorHandler } from './middlewares/errorHandler';
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { env } from './config/env';
 import { apiLimiter } from './middlewares/rateLimiter';
+import authRoutes from '@/routes/authRoutes';
 
 const app = express();
 connectDB();
@@ -30,6 +31,9 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
+app.use('/api/auth', authRoutes);
+
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 const PORT = env.PORT;
