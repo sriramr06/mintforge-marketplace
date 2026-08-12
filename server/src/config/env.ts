@@ -78,6 +78,7 @@ export const env = {
 
   // JWT
   JWT_SECRET: requireString('JWT_SECRET', 32),
+  JWT_REFRESH_SECRET: requireString('JWT_REFRESH_SECRET', 32),
   JWT_ACCESS_EXPIRES_IN: stringWithDefault('JWT_ACCESS_EXPIRES_IN', '30m'),
   JWT_REFRESH_EXPIRES_IN: stringWithDefault('JWT_REFRESH_EXPIRES_IN', '7d'),
 

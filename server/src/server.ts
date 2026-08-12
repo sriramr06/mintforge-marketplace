@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { connectDB } from './config/database';
 import { errorHandler } from './middlewares/errorHandler';
 import { env } from './config/env';
+import { apiLimiter } from './middlewares/rateLimiter';
 
 const app = express();
 connectDB();
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use('/api', apiLimiter);
 
 app.get('/api/health', (_req, res) => {
   res.status(200).json({

@@ -32,6 +32,9 @@ export const errorHandler = (
       statusCode = 401;
       message = 'Invalid token';
       isOperational = true;
+    } else if (err.name === 'TokenExpiredError') {
+      statusCode = 401;
+      message: 'Token Expired'
     }
   }
 
